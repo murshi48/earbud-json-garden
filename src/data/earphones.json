@@ -1,0 +1,47 @@
+
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "SoundPro X1",
+      "price": 199.99,
+      "color": "Midnight Black",
+      "batteryLife": "Up to 24 hours",
+      "features": [
+        "Active Noise Cancellation",
+        "Bluetooth 5.2",
+        "Touch Controls",
+        "Water Resistant"
+      ],
+      "description": "Experience crystal clear sound with the SoundPro X1 wireless earbuds."
+    },
+    {
+      "id": 2,
+      "name": "AirBeat Pro",
+      "price": 149.99,
+      "color": "Pearl White",
+      "batteryLife": "Up to 20 hours",
+      "features": [
+        "Premium Sound Quality",
+        "Quick Charging",
+        "Voice Assistant",
+        "Dual Device Connection"
+      ],
+      "description": "Premium wireless earbuds designed for comfort and performance."
+    },
+    {
+      "id": 3,
+      "name": "BassMax Elite",
+      "price": 179.99,
+      "color": "Navy Blue",
+      "batteryLife": "Up to 30 hours",
+      "features": [
+        "Deep Bass Technology",
+        "Ambient Sound Mode",
+        "Ergonomic Design",
+        "Smart Pause"
+      ],
+      "description": "Immerse yourself in deep, rich sound with BassMax Elite."
+    }
+  ]
+}
