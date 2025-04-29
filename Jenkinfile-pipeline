@@ -1,0 +1,64 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = "murshi48/project2"
+    }
+
+    stages {
+        stage('Clone Code') {
+            steps {
+                git 'https://github.com/murshi48/earbud-json-garden.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh '''
+                    docker build -t $DOCKER_IMAGE:latest . || { echo "Docker build failed"; exit 1; }
+                '''
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin || exit 1
+                        docker push $DOCKER_IMAGE:latest
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy to Minikube (Rolling Update)') {
+            steps {
+                sh '''
+                    kubectl apply -f deployment/deployment.yaml || exit 1
+                    kubectl apply -f deployment/service.yaml || exit 1
+                '''
+            }
+        }
+
+        stage('Canary Deployment (Optional)') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        docker tag $DOCKER_IMAGE:latest $DOCKER_IMAGE:canary
+                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin || exit 1
+                        docker push $DOCKER_IMAGE:canary
+                        kubectl apply -f deployment/canary-deployment.yaml || exit 1
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                sh 'kubectl get pods || echo "kubectl command failed"'
+            }
+        }
+    }
+}
